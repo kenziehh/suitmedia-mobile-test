@@ -1,6 +1,5 @@
-package com.suitmedia.mobile_test.ui.theme
+package com.suitmedia.mobile_test.presentation.design_system
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
