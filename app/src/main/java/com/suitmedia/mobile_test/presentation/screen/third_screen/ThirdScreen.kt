@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil3.ImageLoader
 import coil3.compose.rememberAsyncImagePainter
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.suitmedia.mobile_test.core.models.UserRegres
@@ -98,11 +101,27 @@ fun ThirdScreen(
     }
 }
 
+
 @Composable
 fun UserListItem(
     user: UserRegres,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            add(OkHttpNetworkFetcherFactory())
+        }
+        .build()
+
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(user.avatar)
+            .crossfade(true)
+            .build(),
+        imageLoader = imageLoader
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,16 +130,11 @@ fun UserListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(user.avatar)
-                    .crossfade(true)
-                    .build()
-            ),
+            painter = painter,
             contentDescription = null,
             modifier = Modifier
                 .size(56.dp)
-                .background(color = Color.LightGray, shape = CircleShape),
+                .background(color = Color.LightGray, shape = CircleShape).clip(CircleShape),
             contentScale = ContentScale.Crop
         )
 
