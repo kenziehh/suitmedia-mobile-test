@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetUserUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend fun execute(): Result<List<UserRegres>> {
-        return userRepository.getUsers()
+    suspend fun execute(page: Int, perPage: Int): Result<List<UserRegres>> {
+        return userRepository.getUsers(page, perPage)
     }
 }

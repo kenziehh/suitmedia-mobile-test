@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.suitmedia.mobile_test.core.data.local.preference.UserPreferencesManager
 import com.suitmedia.mobile_test.core.models.UserRegres
-import com.suitmedia.mobile_test.data.remote.user.UserService
+import com.suitmedia.mobile_test.domain.usecase.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ThirdScreenViewModel @Inject constructor(
-    private val apiService: UserService,
+    private val getUserUseCase: GetUserUseCase,
     private val preferencesManager: UserPreferencesManager
 ) : ViewModel() {
 
@@ -29,35 +29,23 @@ class ThirdScreenViewModel @Inject constructor(
 
     init {
         fetchUsers()
-
     }
 
-    fun fetchUsers() {
+    private fun fetchUsers() {
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                val response = apiService.getUsers(currentPage, perPage)
-                if (response.isSuccessful) {
-                    response.body()?.data?.let { userList ->
-                        // Append fetched users to the existing list
-                        _users.value = _users.value + userList
-
-                        // Log the fetched user list
-                        Log.d("ThirdScreenViewModel", "Fetched users: $userList")
-                    }
-                } else {
-                    // Log the error response if not successful
-                    Log.e("ThirdScreenViewModel", "Error: ${response.code()} - ${response.message()}")
+                val result = getUserUseCase.execute(currentPage, perPage)
+                result.onSuccess { userList ->
+                    _users.value = _users.value + userList
+                }.onFailure { error ->
+                    Log.e("ThirdScreenViewModel", "Error: ${error.message}", error)
                 }
-            } catch (e: Exception) {
-                // Log the exception
-                Log.e("ThirdScreenViewModel", "Exception occurred: ${e.message}", e)
             } finally {
                 _isRefreshing.value = false
             }
         }
     }
-
 
     fun refreshUsers() {
         viewModelScope.launch {

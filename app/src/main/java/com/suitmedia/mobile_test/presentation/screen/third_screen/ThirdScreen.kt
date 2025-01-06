@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,17 +24,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.suitmedia.mobile_test.R
 import com.suitmedia.mobile_test.core.models.UserRegres
-import com.suitmedia.mobile_test.presentation.component.CustomButton
 
 @Composable
 fun ThirdScreen(
@@ -45,52 +40,61 @@ fun ThirdScreen(
     val users by viewModel.users.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .safeDrawingPadding()) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White)) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-            Text("Third Screen", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold))
-            Box(modifier = Modifier.size(46.dp))
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        if (users.isEmpty()) {
-            Text(
-                text = "No users found.",
-                modifier = Modifier.align(Alignment.Center),
-                textAlign = TextAlign.Center,
-                color = Color.Gray,
-                fontSize = 16.sp
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+    Box(modifier = Modifier.fillMaxSize().safeDrawingPadding()) {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().background(Color.White)
             ) {
-                items(users) { user ->
-                    UserListItem(
-                        user = user,
-                        onClick = {
-                            // Save selected user to preferences
-                            viewModel.saveSelectedUsername("${user.firstName} ${user.lastName}")
-                            navController.popBackStack() // Navigate back to the Second Screen
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+                Text("Third Screen", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold))
+            }
+
+            if (users.isEmpty()) {
+                Text(
+                    text = "No users found.",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(users) { user ->
+                        UserListItem(
+                            user = user,
+                            onClick = {
+                                viewModel.saveSelectedUsername("${user.firstName} ${user.lastName}")
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                    item {
+                        if (!isRefreshing) {
+                            Text(
+                                text = "Load More...",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { viewModel.loadNextPage() },
+                                textAlign = TextAlign.Center,
+                                color = Color.Blue,
+                                fontSize = 16.sp
+                            )
                         }
-                    )
+                    }
                 }
             }
         }
-        CustomButton(
-            onClick = { viewModel.refreshUsers() },
-            text = "Pull to Refresh",
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        )
+        if (isRefreshing) {
+            Box(modifier = Modifier.fillMaxSize().background(Color(0xAAFFFFFF))) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
     }
 }
 
