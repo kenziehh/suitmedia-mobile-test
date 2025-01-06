@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FirstScreenViewModel @Inject constructor(
     private val palindromeUseCase: PalindromeUseCase,
-    private val userPreferencesManager: UserPreferencesManager // Add the UserPreferencesManager as a dependency
+    private val userPreferencesManager: UserPreferencesManager
 ) : ViewModel() {
 
     private val _isPalindromeResult = MutableStateFlow<String?>(null)

@@ -1,5 +1,6 @@
 package com.suitmedia.mobile_test.presentation.screen.first_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
@@ -13,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.suitmedia.mobile_test.R
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.suitmedia.mobile_test.presentation.component.CustomButton
@@ -22,13 +23,15 @@ import com.suitmedia.mobile_test.presentation.component.CustomTextField
 @Composable
 fun FirstScreen(
     navController: NavController,
-    viewModel: FirstScreenViewModel = hiltViewModel() ,
+    viewModel: FirstScreenViewModel = hiltViewModel(),
 ) {
     val dialogVisible by viewModel.dialogVisible.collectAsState()
     val isPalindromeResult by viewModel.isPalindromeResult.collectAsState()
 
     var name by remember { mutableStateOf("") }
     var inputText by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -81,9 +84,12 @@ fun FirstScreen(
 
             CustomButton(
                 onClick = {
-                    viewModel.saveUsername(name)
-
-                    navController.navigate("second_screen")
+                    if (name.isBlank()) {
+                        Toast.makeText(context, "Please enter your name", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.saveUsername(name)
+                        navController.navigate("second_screen")
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 text = "NEXT"
