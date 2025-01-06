@@ -2,12 +2,19 @@ package com.suitmedia.mobile_test.presentation.screen.first_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.suitmedia.mobile_test.core.data.local.preference.UserPreferencesManager
 import com.suitmedia.mobile_test.domain.usecase.PalindromeUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FirstScreenViewModel(private val palindromeUseCase: PalindromeUseCase) : ViewModel() {
+@HiltViewModel
+class FirstScreenViewModel @Inject constructor(
+    private val palindromeUseCase: PalindromeUseCase,
+    private val userPreferencesManager: UserPreferencesManager // Add the UserPreferencesManager as a dependency
+) : ViewModel() {
 
     private val _isPalindromeResult = MutableStateFlow<String?>(null)
     val isPalindromeResult: StateFlow<String?> get() = _isPalindromeResult
@@ -28,4 +35,11 @@ class FirstScreenViewModel(private val palindromeUseCase: PalindromeUseCase) : V
     fun dismissDialog() {
         _dialogVisible.value = false
     }
+
+    fun saveUsername(username: String) {
+        viewModelScope.launch {
+            userPreferencesManager.saveUsername(username)
+        }
+    }
 }
+

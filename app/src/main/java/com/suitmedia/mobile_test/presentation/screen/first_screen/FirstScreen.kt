@@ -2,26 +2,26 @@ package com.suitmedia.mobile_test.presentation.screen.first_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.suitmedia.mobile_test.R
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.suitmedia.mobile_test.presentation.component.CustomButton
 import com.suitmedia.mobile_test.presentation.component.CustomTextField
 
 @Composable
 fun FirstScreen(
-    viewModel: FirstScreenViewModel
+    navController: NavController,
+    viewModel: FirstScreenViewModel = hiltViewModel() ,
 ) {
     val dialogVisible by viewModel.dialogVisible.collectAsState()
     val isPalindromeResult by viewModel.isPalindromeResult.collectAsState()
@@ -49,7 +49,7 @@ fun FirstScreen(
             CustomTextField(
                 value = name,
                 onValueChange = { name = it },
-                placeholder = "Name" ,
+                placeholder = "Name",
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -58,7 +58,7 @@ fun FirstScreen(
             CustomTextField(
                 value = inputText,
                 onValueChange = { inputText = it },
-                placeholder =  "Palindrome" ,
+                placeholder = "Palindrome",
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -73,15 +73,17 @@ fun FirstScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomButton(
-                onClick = {  },
+                onClick = {
+                    viewModel.saveUsername(name)
+
+                    navController.navigate("second_screen")
+                },
                 modifier = Modifier.fillMaxWidth(),
                 text = "NEXT"
-
             )
         }
     }
 
-    // Dialog for Palindrome Result
     if (dialogVisible) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissDialog() },
