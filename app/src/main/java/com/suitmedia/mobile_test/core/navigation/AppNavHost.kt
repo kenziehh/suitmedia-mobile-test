@@ -16,7 +16,10 @@ fun AppNavHost() {
             FirstScreen(navController)
         }
         composable("second_screen") {
-            SecondScreen()
+            SecondScreen(navController)
+        }
+        composable("third_screen") {
+            SecondScreen(navController)
         }
     }
 }
