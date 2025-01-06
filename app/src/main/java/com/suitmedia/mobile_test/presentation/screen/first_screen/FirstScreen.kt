@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.suitmedia.mobile_test.R
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.suitmedia.mobile_test.presentation.component.CustomButton
@@ -46,6 +47,12 @@ fun FirstScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.add_user_icon),
+                contentDescription = "",
+                modifier = Modifier.size(120.dp)
+            )
+            Spacer(modifier = Modifier.height(50.dp))
             CustomTextField(
                 value = name,
                 onValueChange = { name = it },
