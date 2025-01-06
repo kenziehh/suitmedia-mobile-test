@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.suitmedia.mobile_test.presentation.screen.first_screen.FirstScreen
 import com.suitmedia.mobile_test.presentation.screen.second_screen.SecondScreen
+import com.suitmedia.mobile_test.presentation.screen.third_screen.ThirdScreen
 
 @Composable
 fun AppNavHost() {
@@ -19,7 +20,7 @@ fun AppNavHost() {
             SecondScreen(navController)
         }
         composable("third_screen") {
-            SecondScreen(navController)
+            ThirdScreen(navController)
         }
     }
 }

@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.coil.compose)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
